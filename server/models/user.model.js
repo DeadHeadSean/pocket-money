@@ -5,7 +5,8 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     role: { type:String, enum: ['parent', 'child'], required: true},
     balance: { type: Number, default: 0 },
-    age: { type: Number },
+    parent: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    age: { type: Number, min: 0, max: 120},
 
 });
 

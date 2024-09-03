@@ -7,32 +7,6 @@ import Register from './pages/Register';
 import Header from './components/Header';
 import Welcome from './pages/Welcome';
 
-
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(error) {
-    return {hasError: true };
-  }
-
-
-  componentDidCatch(error, errorInfo) {
-    console.log(error, errorInfo);
-  }
-  
-  render() {
-    if (this.state.hasError) {
-      return <h1>משהו לא תקין</h1>;
-    }
-
-    return this.props.children;
-  }
-}
-
-
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [user, setUser] = useState(null);
@@ -59,12 +33,4 @@ function App() {
   );
 }
 
-function WrappedApp() {
-  return (
-    <ErrorBoundary>
-      <App />
-    </ErrorBoundary>
-  )
-}
-
-export default WrappedApp;
+export default App;

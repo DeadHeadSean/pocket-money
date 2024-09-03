@@ -36,7 +36,7 @@ const ChildDashboard = () => {
     const fetchTransactions = async () => {
         try {
             const response = await axios.get('/api/transactions');
-        } catch {
+        } catch (error) {
             console.error('Error fetching transactions', error);
         }
     };
@@ -91,7 +91,7 @@ const ChildDashboard = () => {
                     <ListItem key={transaction._id}>
                         <ListItemText
                             primary={'₪${Math.abs(transaction.amount).toFixed(2)} - ${tranaction.descriprion}'}
-                            secondary={new Date(tranaction.date).toLocaleString()}
+                            secondary={new Date(transaction.date).toLocaleString()}
                         />
                     </ListItem>
                 ))}

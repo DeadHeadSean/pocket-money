@@ -19,7 +19,7 @@ const ParentDashboard = () => {
             const response = await axios.get('/api/parent/children');
             setChildren(response.data);
         } catch (error) {
-            ContentVisibilityAutoStateChangeEvent.error('Error fetching children:', error);
+            console.error('Error fetching children:', error);
         }
     };
 
@@ -40,7 +40,7 @@ const ParentDashboard = () => {
     const updateBalance = async () => {
         if(!selectedChild) return;
         try {
-            await axios.post('/api/parent/update-balance', { childId: selectedChild._id, amount: Number(amounr) });
+            await axios.post('/api/parent/update-balance', { childId: selectedChild._id, amount: Number(amount) });
             setAmount('');
             fetchChildren();
         } catch (error) {
@@ -96,7 +96,7 @@ const ParentDashboard = () => {
                         label="סכום"
                         type="number"
                         value={amount}
-                        onChange={(e) => setAmoount(e.target.value)}
+                        onChange={(e) => setAmount(e.target.value)}
                         fullWidthmargin="normal"
                     />
                     <Button variant="contained" color="primary" onClick={updateBalance} sx={{ mt: 1 }}>

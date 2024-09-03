@@ -1,10 +1,9 @@
 const express = require('express');
-const app = express();
 const connectDB = require('./db');
-const port = process.env.PORT || 3001;
 const app = require('./app');
 const { scheduleWeeklyDeposit } = require('./scheduledTasks');
 
+const port = process.env.PORT || 3001;
 
 connectDB();
 scheduleWeeklyDeposit();

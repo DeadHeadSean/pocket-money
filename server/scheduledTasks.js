@@ -1,5 +1,5 @@
 const cron = require('node-cron');
-const User = reqiuire('./models/user.model');
+const User = require('./models/user.model');
 const Transaction = require('./models/transaction.model')
 
 const weeklyDeposit = async () => {
@@ -24,7 +24,7 @@ const weeklyDeposit = async () => {
 };
 
 const scheduleWeeklyDeposit = () => {
-    cron.schedule('0 0 ** 0', weeklyDeposit);
+    cron.schedule('0 0 * * 0', weeklyDeposit);
 };
 
 module.exports = { scheduleWeeklyDeposit };

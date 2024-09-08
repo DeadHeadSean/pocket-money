@@ -6,16 +6,33 @@ const Register = ({ onRegister }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [age, setAge] = useState('');
-    const [role, setRole] = useState('ילד');
+    const [role, setRole] = useState('parent');
+    const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         try {
-            await register(username, password, age, role);
-            onRegister();
+            const ageNumber = parseInt(age, 10);
+            if (isNaN(ageNumber)) {
+                throw new Error('גיל חייב להיות מספר');
+            }
+            const user = await register(username, password, 'parent', ageNumber);
+            console.log('registrartion successfull!')
+            onRegister(user);
         } catch (error) {
             console.error('Registration failed', error);
+            if (error.response?.data?.errors) {
+                const errorMessage = Object.values(error.response.data.errors).join(', ');
+                setError(`Registration failed: ${errorMessage}`);
+            } else {
+                setError(error.response?.data?.message || error.message ||'Registration failed. please try again');
+            }
         }
+    };
+
+    const handleRoleChange = (event) => {
+        setRole(event.target.value);
     };
 
     return (
@@ -23,6 +40,11 @@ const Register = ({ onRegister }) => {
             <Typography variant="h4" align="center" gutterBottom>
                 הרשמה
             </Typography>
+            {error && (
+                <Typography color="error" align="center">
+                    {error}
+                </Typography>
+            )}
             <form onSubmit={handleSubmit}>
                 <TextField
                     label="שם משתמש"
@@ -46,17 +68,6 @@ const Register = ({ onRegister }) => {
                     value={age}
                     onChange={(e) => setAge(e.target.value)}
                 />
-                <FormControl fullWidth margin="normal">
-                    <InputLabel id="role-select-label">סוג משתמש</InputLabel>
-                    <Select
-                        labelId="role-select-label"
-                        value={role}
-                        onChange={(e) => setRole(e.target.value)}
-                    >
-                        <menuitem value="child">ילד</menuitem>
-                        <menuitem value="parent">הורה</menuitem>
-                    </Select>
-                </FormControl>
                 <Button type="submit" variant="contained" color="primary" fullWidth>
                     הירשם
                 </Button>

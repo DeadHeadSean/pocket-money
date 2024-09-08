@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Container, Typography, Button, TextField, List, ListItem, ListItemText, Box } from '@mui/material';
+import { Container, Typography, Button, TextField, List, ListItem, ListItemText, Box, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 
 const ChildDashboard = () => {
     const [balance, setBalance] = useState(0);
-    const [transactions, setTeansactions] = useState([]);
-    const [amount, setAmoount] = useState('');
+    const [transactions, setTransactions] = useState([]);
+    const [amount, setAmount] = useState('');
     const [description, setDescription] = useState('');
     const [age, setAge] = useState(null);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
 
     useEffect(() => {
         fetchUserInfo();
@@ -21,6 +23,7 @@ const ChildDashboard = () => {
             setAge(response.data.age);
         } catch (error) {
             console.error('Error fetching user info', error);
+            setError('Failed to fetch user info');
         }
     };
 
@@ -30,14 +33,17 @@ const ChildDashboard = () => {
             setBalance(response.data.balance);
         } catch (error) {
             console.error('Error fetching balance', error);
+            setError('Failed to fetch balance');
         }
     };
 
     const fetchTransactions = async () => {
         try {
             const response = await axios.get('/api/transactions');
+            setTransactions(response.data);
         } catch (error) {
             console.error('Error fetching transactions', error);
+            setError('Failed to fetch transactions');
         }
     };
 
@@ -49,19 +55,21 @@ const ChildDashboard = () => {
 
         try {
             await axios.post('/api/transactions', { amount: -Number(amount), type: 'expense', description});
-            setAmoount('');
+            setAmount('');
             setDescription('');
+            setSuccess('הוצאה נוספה בהצלחה');
             fetchBalance();
             fetchTransactions();
         } catch (error) {
              console.error('בעיה בהוספת הוצאה', error);
+             setError('Failed to add expense');
         }
     };
 
     return (
         <Container>
             <Typography variant="h4" sx={{ my: 2}}>לוח בקרה ילד</Typography>
-            <Typography variant="h5" sx={{ my: 2}}>גיל</Typography>
+            {age && <Typography variant="h5" sx={{ my: 2}}>גיל: {age}</Typography>}
             <Typography variant="h5" sx={{ my: 2 }}>דמי כיס : ₪{balance.toFixed(2)}</Typography>
 
             <Box sx={{ mb: 3 }}>
@@ -69,7 +77,7 @@ const ChildDashboard = () => {
                     label="סכום"
                     type="number"
                     value={amount}
-                    onChange={(e) => setAmoount(e.target.value)}
+                    onChange={(e) => setAmount(e.target.value)}
                     fullWidth
                     margin="normal"
                 />
@@ -91,11 +99,17 @@ const ChildDashboard = () => {
                     <ListItem key={transaction._id}>
                         <ListItemText
                             primary={'₪${Math.abs(transaction.amount).toFixed(2)} - ${tranaction.descriprion}'}
-                            secondary={new Date(transaction.date).toLocaleString()}
+                            secondary={`${transactions.type === 'expense' ? 'הכנסה' : 'הוצאה'} - ${new Date(transaction.date).toLocaleDateString()}`}
                         />
                     </ListItem>
                 ))}
             </List>
+
+            <Snackbar open={!!error} autoHideDuration={6000} onClose={() => setSuccess('')}>
+                <Alert onClose={() => setSuccess('')} severity='success' sx={({ width: '100%' })}>
+                    {success}
+                </Alert>
+            </Snackbar>
         </Container>
     );
 };

@@ -5,14 +5,17 @@ import { login } from '../services/auth';
 const Login = ({ onLogin }) => {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setError('');
         try {
             const data = await login(username, password);
             onLogin(data);
         } catch (error) {
             console.error('Login Failed', error);
+            setError('Login failed. Please check your credentials and try again');
         }
     };
 
@@ -21,6 +24,11 @@ const Login = ({ onLogin }) => {
             <Typography variant="h4" align="center" gutterBottom>
                 כניסה
             </Typography>
+            {error && (
+                <Typography color="error" align="center" gutterBottom>
+                    {error}
+                </Typography>
+            )}
             <form onSubmit={handleSubmit}>
                 <TextField
                     label="שם משתמש"
